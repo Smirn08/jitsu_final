@@ -33,7 +33,7 @@ def load_requirements(*requirements_paths):
     return list(requirements)
 
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
 
 # allow setup.py to be run from any path
@@ -42,7 +42,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
     name='jitsu_final',
-    version='0.1.1',
+    version='0.2.1',
     packages=['jitsu_final'],
     include_package_data=True,
     long_description=README,
