@@ -78,7 +78,7 @@ class PikabuParser:
             return "PARSER ERROR"
 
 
-class PikabuRatingParser:
+class PikabuStatParser:
     DOMAIN = "pikabu.ru"
 
     def __init__(self, url: str, timeout=3):
@@ -88,12 +88,22 @@ class PikabuRatingParser:
 
     def get_count_views(self):
         try:
-            response = requests.get(url=self.url, headers=self.headers, timeout=self.timeout)
+            response = requests.get(self.url, headers=headers, timeout=3)
             response.raise_for_status()
-            soup = BeautifulSoup(response.text, "html.parser")
-            rating = soup.find("div", class_="story__rating-count")
-            if rating:
-                return int(rating.text)
+            response = requests.get(
+                f"https://pikabu.ru/stat/story/{self.url.split('_')[-1]}",
+                headers=headers,
+                timeout=3,
+            )
+            response.raise_for_status()
+            if response.json()["result"] == True:
+                if "data" in response.json().keys():
+                    if "v" in response.json()["data"].keys():
+                        return int(response.json()["data"]["v"])
+                    else:
+                        return "NO VIEWS"
+                else:
+                    return "PARSER ERROR"
             else:
                 return "PARSER ERROR"
         except (requests.RequestException, ValueError):
@@ -236,9 +246,9 @@ class UniversalViewCounter:
     Обертка над всем парсерами
     """
 
-    def __init__(self, timeout=3, pikabu_rating=False, use_selenium=True):
+    def __init__(self, timeout=3, pikabu_stat=True, use_selenium=False):
         self.timeout = timeout
-        self.pikabu_rating = pikabu_rating
+        self.pikabu_stat = pikabu_stat
         self.use_selenium = use_selenium
         self.parsers_callables = [
             VimeoParser,
@@ -247,9 +257,9 @@ class UniversalViewCounter:
             HabrParser,
             PornHubParser,
         ]
-        if self.pikabu_rating:
-            # загушка вместо селениума
-            self.parsers_callables.append(PikabuRatingParser)
+        if self.pikabu_stat:
+            # вместо селениума
+            self.parsers_callables.append(PikabuStatParser)
         if self.use_selenium:
             self.pikabu_parser = PikabuParser()
             # через call поддерживает тот же интерфейс что у остальных
