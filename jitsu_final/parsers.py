@@ -267,8 +267,7 @@ class UniversalViewCounter:
 
     def quit(self):
         """
-        Костыли!
-        Без этого у selenium+firefox memory leak
+        Без этого у selenium  memory leak
         """
         if self.use_selenium:
             self.pikabu_parser.driver.quit()
