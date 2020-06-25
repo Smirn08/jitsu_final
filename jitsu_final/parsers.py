@@ -88,12 +88,12 @@ class PikabuStatParser:
 
     def get_count_views(self):
         try:
-            response = requests.get(self.url, headers=self.headers, timeout=3)
+            response = requests.get(self.url, headers=self.headers, timeout=self.timeout)
             response.raise_for_status()
             response = requests.get(
                 f"https://pikabu.ru/stat/story/{self.url.split('_')[-1]}",
                 headers=self.headers,
-                timeout=3,
+                timeout=self.timeout,
             )
             response.raise_for_status()
             if response.json()["result"] == True:
