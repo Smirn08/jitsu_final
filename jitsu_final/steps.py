@@ -94,7 +94,7 @@ def pull_data_step(
 
 
 def update_data_step(db_creds: str):
-    db_records_old = UrlViewCheckResult.get_records(db_creds, hours=48, older=True)
+    db_records_old = UrlViewCheckResult.get_records(db_creds, hours=47, older=True)
     urls = [rec.url for rec in db_records_old]
     counts = count_url_views(urls)
     now = datetime.datetime.now()
